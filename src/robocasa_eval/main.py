@@ -45,16 +45,40 @@ IMAGE_KEYS = (
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--task-set", "--task_set", nargs="+", required=True)
+    tasks = parser.add_mutually_exclusive_group(required=True)
+    tasks.add_argument("--task-set", "--task_set", nargs="+")
+    tasks.add_argument(
+        "--smoke-lightwheel-task", metavar="TASK",
+        help="Evaluate one task with only Lightwheel objects and 100%% generated textures",
+    )
     parser.add_argument("--split", choices=("pretrain", "target"), default="pretrain")
-    parser.add_argument("--num-trials", type=int, default=50)
+    parser.add_argument("--num-trials", type=int)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--resize-size", type=int, default=224)
     parser.add_argument("--replan-steps", type=int, default=5)
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--log-dir", type=Path, default=PROJECT_ROOT / "outputs")
-    return parser.parse_args(argv)
+    args = parser.parse_args(argv)
+    if args.num_trials is None:
+        args.num_trials = 1 if args.smoke_lightwheel_task is not None else 50
+    return args
+
+
+def resolve_evaluation_tasks(args: argparse.Namespace, registry) -> list[str]:
+    if args.smoke_lightwheel_task is not None:
+        if args.smoke_lightwheel_task not in registry["all_tasks"]:
+            raise ValueError(f"Unknown RoboCasa task: {args.smoke_lightwheel_task}")
+        return [args.smoke_lightwheel_task]
+    return resolve_task_sets(args.task_set, registry)
+
+
+def make_task_env(gym, task: str, args: argparse.Namespace):
+    """Pass only the verified RoboCasa 1.0.1 smoke kwargs to gym.make."""
+    kwargs = {"split": args.split, "seed": args.seed}
+    if args.smoke_lightwheel_task is not None:
+        kwargs.update(obj_registries=("lightwheel",), generative_textures="100p")
+    return gym.make(f"robocasa/{task}", **kwargs)
 
 
 def evaluate(args: argparse.Namespace) -> None:
@@ -81,7 +105,7 @@ def evaluate(args: argparse.Namespace) -> None:
         raise ValueError("replan_steps must be positive")
 
     np.random.seed(args.seed)
-    task_names = resolve_task_sets(args.task_set, TASK_SET_REGISTRY)
+    task_names = resolve_evaluation_tasks(args, TASK_SET_REGISTRY)
     for task in task_names:
         horizon = select_horizon(get_task_horizon(task), robocasa.__version__)
         log_path = evaluation_path(args.log_dir, args.split, task, datetime.now())
@@ -90,7 +114,7 @@ def evaluate(args: argparse.Namespace) -> None:
             continue
         log_path.mkdir(parents=True, exist_ok=False)
         client = WebsocketClientPolicy(args.host, args.port)
-        env = gym.make(f"robocasa/{task}", split=args.split, seed=args.seed)
+        env = make_task_env(gym, task, args)
         successes = 0
         try:
             for episode_idx in tqdm.tqdm(range(args.num_trials), desc=task):

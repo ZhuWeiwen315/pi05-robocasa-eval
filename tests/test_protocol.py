@@ -1,10 +1,13 @@
 """Checks that can run without simulator, model, or GPU dependencies."""
 
+from contextlib import redirect_stderr
 from datetime import datetime
+from io import StringIO
 from pathlib import Path
 import unittest
+from unittest.mock import Mock
 
-from robocasa_eval.main import parse_args
+from robocasa_eval.main import make_task_env, parse_args, resolve_evaluation_tasks
 from robocasa_eval.protocol import (
     OFFICIAL_BASELINE_VERSION,
     OFFICIAL_CHECKPOINT,
@@ -21,6 +24,41 @@ class ProtocolTests(unittest.TestCase):
         args = parse_args(["--task-set", "atomic_seen"])
         self.assertEqual(args.host, "127.0.0.1")
         self.assertEqual(args.task_set, ["atomic_seen"])
+        self.assertIsNone(args.smoke_lightwheel_task)
+        self.assertEqual(args.num_trials, 50)
+
+    def test_smoke_cli_uses_verified_robocasa_values(self) -> None:
+        args = parse_args(["--smoke-lightwheel-task", "OpenDrawer"])
+        self.assertEqual(args.smoke_lightwheel_task, "OpenDrawer")
+        self.assertIsNone(args.task_set)
+        self.assertEqual(args.num_trials, 1)
+        self.assertEqual(
+            parse_args(["--smoke-lightwheel-task", "OpenDrawer", "--num-trials", "2"]).num_trials,
+            2,
+        )
+        self.assertEqual(resolve_evaluation_tasks(args, {"all_tasks": ["OpenDrawer"]}), ["OpenDrawer"])
+        gym = Mock()
+        make_task_env(gym, "OpenDrawer", args)
+        gym.make.assert_called_once_with(
+            "robocasa/OpenDrawer", split="pretrain", seed=7,
+            obj_registries=("lightwheel",), generative_textures="100p",
+        )
+
+    def test_default_gym_make_kwargs_remain_unchanged(self) -> None:
+        args = parse_args(["--task-set", "atomic_seen"])
+        self.assertEqual(
+            resolve_evaluation_tasks(args, {"atomic_seen": ["A", "B"]}), ["A", "B"]
+        )
+        gym = Mock()
+        make_task_env(gym, "OpenDrawer", args)
+        gym.make.assert_called_once_with("robocasa/OpenDrawer", split="pretrain", seed=7)
+
+    def test_smoke_requires_exactly_one_resolved_task(self) -> None:
+        args = parse_args(["--smoke-lightwheel-task", "Missing"])
+        with self.assertRaises(ValueError):
+            resolve_evaluation_tasks(args, {"all_tasks": ["OpenDrawer"]})
+        with redirect_stderr(StringIO()), self.assertRaises(SystemExit):
+            parse_args(["--task-set", "atomic_seen", "--smoke-lightwheel-task", "OpenDrawer"])
 
     def test_task_sets_expand_and_deduplicate(self) -> None:
         registry = {"atomic_seen": ["A", "B"], "target50": ["B", "C"]}
