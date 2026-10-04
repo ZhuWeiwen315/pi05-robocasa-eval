@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pi05-robocasa-eval"
+version = "0.1.0"
+description = "RoboCasa 1.0.1 evaluation harness for the official pi0.5 baseline"
+requires-python = ">=3.11,<3.12"
+
+[tool.setuptools.packages.find]
+where = ["src"]

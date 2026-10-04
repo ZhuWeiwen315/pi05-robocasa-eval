@@ -1,0 +1,28 @@
+# Simulation evaluation environment; Python 3.11.16.
+# Editable upstreams are installed separately with --no-deps:
+# robosuite 5ce6643f3092639d08f7b0f90ed1c6a84f50552c
+# robocasa 456174f62b89b8fca99eaaf33949c29fec9cfc2a (1.0.1)
+# robocasa-benchmark/openpi ca4c6d710db75e276bc7c866a57bd7e4aee5b6e8
+numpy==2.2.5
+numba==0.61.2
+scipy==1.15.3
+mujoco==3.3.1
+qpsolvers[quadprog]>=4.3.1
+Pillow
+opencv-python-headless
+pynput
+termcolor
+pytest
+tqdm
+pyyaml
+imageio
+imageio-ffmpeg
+h5py
+lxml
+gymnasium==0.29.1
+msgpack
+websockets
+dm-tree
+tree>=0.2.4
+pygame
+hidapi

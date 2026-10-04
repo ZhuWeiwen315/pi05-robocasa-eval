@@ -1,0 +1,17 @@
+.env
+*.key
+*.pem
+checkpoints/
+datasets/
+logs/
+cache/
+tmp/
+outputs/
+wandb/
+__pycache__/
+.agents/
+.aws/
+.codex/
+sources/
+*.egg-info/
+build/
