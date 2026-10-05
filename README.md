@@ -14,6 +14,12 @@ A project-owned evaluation harness for the official RoboCasa π₀.₅ checkpoin
 
 The model, checkpoint, RoboCasa environment, and core policy transforms come from the upstream projects. This repository does not implement or train π₀.₅ from scratch.
 
+## Controlled baseline (2026-10-05)
+
+With policy seed 0 reset by restarting the server before every episode, OpenDrawer succeeded on **5/10 scene seeds (0–9)**. Two independent seed-0 runs had identical recorded trajectories and succeeded after 253 steps. This is a controlled single-task smoke baseline, not an official benchmark.
+
+See [protocol and per-seed results](docs/CONTROLLED_BASELINE.md) and [machine-readable summary](docs/controlled_baseline.json).
+
 ## Initial smoke results
 
 One `OpenDrawer` rollout per scene seed, using `pretrain`, Lightwheel-only objects and `generative_textures="100p"`:

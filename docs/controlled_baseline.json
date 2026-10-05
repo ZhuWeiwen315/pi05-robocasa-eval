@@ -1,0 +1,102 @@
+[
+  {
+    "scene_seed": 0,
+    "policy_seed": 0,
+    "success": true,
+    "steps": 253,
+    "peak_opening": 0.9585779149672967,
+    "final_opening": 0.9585779149672967,
+    "prompt": "Open the left drawer.",
+    "fixture_name": "stack_2_island_group_1_2"
+  },
+  {
+    "scene_seed": 1,
+    "policy_seed": 0,
+    "success": true,
+    "steps": 259,
+    "peak_opening": 0.9506229924312185,
+    "final_opening": 0.9506229924312185,
+    "prompt": "Open the right drawer.",
+    "fixture_name": "stack_07_island_group_1_3"
+  },
+  {
+    "scene_seed": 2,
+    "policy_seed": 0,
+    "success": true,
+    "steps": 210,
+    "peak_opening": 0.9681572824255402,
+    "final_opening": 0.9681572824255402,
+    "prompt": "Open the right drawer.",
+    "fixture_name": "stack_5_right_group_1_2"
+  },
+  {
+    "scene_seed": 3,
+    "policy_seed": 0,
+    "success": false,
+    "steps": 750,
+    "peak_opening": 0.0004732626994813484,
+    "final_opening": 9.581498545194189e-06,
+    "prompt": "Open the left drawer.",
+    "fixture_name": "stack_4_right_group_1_2"
+  },
+  {
+    "scene_seed": 4,
+    "policy_seed": 0,
+    "success": true,
+    "steps": 355,
+    "peak_opening": 0.9759652332163693,
+    "final_opening": 0.9759652332163693,
+    "prompt": "Open the left drawer.",
+    "fixture_name": "stack_4_left_group_5"
+  },
+  {
+    "scene_seed": 5,
+    "policy_seed": 0,
+    "success": false,
+    "steps": 750,
+    "peak_opening": 0.41300906286048467,
+    "final_opening": 0.4130087925554011,
+    "prompt": "Open the left drawer.",
+    "fixture_name": "stack_2_main_group_3"
+  },
+  {
+    "scene_seed": 6,
+    "policy_seed": 0,
+    "success": false,
+    "steps": 750,
+    "peak_opening": 0.22480887780489117,
+    "final_opening": 0.224808825829644,
+    "prompt": "Open the left drawer.",
+    "fixture_name": "stack_03_main_group_1_2"
+  },
+  {
+    "scene_seed": 7,
+    "policy_seed": 0,
+    "success": false,
+    "steps": 750,
+    "peak_opening": 0.13127822750792778,
+    "final_opening": 0.0261898726909334,
+    "prompt": "Open the left drawer.",
+    "fixture_name": "stack_2_left_group_2"
+  },
+  {
+    "scene_seed": 8,
+    "policy_seed": 0,
+    "success": true,
+    "steps": 224,
+    "peak_opening": 0.9531359826980991,
+    "final_opening": 0.9531359826980991,
+    "prompt": "Open the left drawer.",
+    "fixture_name": "stack_1_left_group_3"
+  },
+  {
+    "scene_seed": 9,
+    "policy_seed": 0,
+    "success": false,
+    "steps": 750,
+    "peak_opening": 0.009328722559945346,
+    "final_opening": 9.871216644064634e-05,
+    "prompt": "Open the left drawer.",
+    "fixture_name": "stack_1_island_group_3"
+  }
+]

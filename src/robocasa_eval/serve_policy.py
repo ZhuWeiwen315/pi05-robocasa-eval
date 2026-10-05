@@ -176,6 +176,7 @@ def build_policy_transforms(
 def build_policy(
     checkpoint: str | Path,
     *,
+    policy_seed: int = 0,
     default_prompt: str | None = None,
     tokenizer_factory: TokenizerFactory | None = None,
     components: OpenPIComponents | None = None,
@@ -197,13 +198,21 @@ def build_policy(
         tokenizer=tokenizer,
         default_prompt=default_prompt,
     )
-    return components.policy.Policy(
+    policy = components.policy.Policy(
         model,
         transforms=pipeline.inputs,
         output_transforms=pipeline.outputs,
-        metadata=None,
+        metadata={
+            "policy_seed": policy_seed,
+            "policy_rng_reset": "server_start",
+        },
         is_pytorch=False,
     )
+    # Fixed upstream uses `rng or key(0)`; set the JAX key after construction.
+    # This private attribute is verified against pinned commit ca4c6d7.
+    import jax
+    policy._rng = jax.random.key(policy_seed)
+    return policy
 
 
 def validate_loopback_host(host: str) -> str:
@@ -261,7 +270,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--host", default=LOOPBACK_HOST, type=_loopback_arg)
     parser.add_argument("--port", default=DEFAULT_PORT, type=int)
     parser.add_argument("--default-prompt")
+    parser.add_argument("--policy-seed", type=int, default=0)
     args = parser.parse_args(argv)
+    if not 0 <= args.policy_seed < 2**32:
+        parser.error("--policy-seed must be between 0 and 4294967295")
     try:
         validate_port(args.port)
     except ValueError as exc:
@@ -274,6 +286,7 @@ def serve(args: argparse.Namespace) -> None:
     components = load_openpi_components()
     policy = build_policy(
         args.checkpoint,
+        policy_seed=args.policy_seed,
         default_prompt=args.default_prompt,
         components=components,
     )
