@@ -1,0 +1,162 @@
+[
+  {
+    "scene_seed": 0,
+    "policy_seed": 0,
+    "replan5": {
+      "success": true,
+      "steps": 253,
+      "peak_opening": 0.9585779149672967,
+      "final_opening": 0.9585779149672967
+    },
+    "replan1": {
+      "success": true,
+      "steps": 295,
+      "peak_opening": 0.9534927655286016,
+      "final_opening": 0.9534927655286016
+    }
+  },
+  {
+    "scene_seed": 1,
+    "policy_seed": 0,
+    "replan5": {
+      "success": true,
+      "steps": 259,
+      "peak_opening": 0.9506229924312185,
+      "final_opening": 0.9506229924312185
+    },
+    "replan1": {
+      "success": true,
+      "steps": 321,
+      "peak_opening": 0.9794079304822461,
+      "final_opening": 0.9794079304822461
+    }
+  },
+  {
+    "scene_seed": 2,
+    "policy_seed": 0,
+    "replan5": {
+      "success": true,
+      "steps": 210,
+      "peak_opening": 0.9681572824255402,
+      "final_opening": 0.9681572824255402
+    },
+    "replan1": {
+      "success": true,
+      "steps": 232,
+      "peak_opening": 0.969831407075046,
+      "final_opening": 0.969831407075046
+    }
+  },
+  {
+    "scene_seed": 3,
+    "policy_seed": 0,
+    "replan5": {
+      "success": false,
+      "steps": 750,
+      "peak_opening": 0.0004732626994813484,
+      "final_opening": 9.581498545194189e-06
+    },
+    "replan1": {
+      "success": false,
+      "steps": 750,
+      "peak_opening": 0.25106783370495056,
+      "final_opening": 0.25106783370495056
+    }
+  },
+  {
+    "scene_seed": 4,
+    "policy_seed": 0,
+    "replan5": {
+      "success": true,
+      "steps": 355,
+      "peak_opening": 0.9759652332163693,
+      "final_opening": 0.9759652332163693
+    },
+    "replan1": {
+      "success": false,
+      "steps": 750,
+      "peak_opening": 0.03801180435496039,
+      "final_opening": 0.00015786973629489475
+    }
+  },
+  {
+    "scene_seed": 5,
+    "policy_seed": 0,
+    "replan5": {
+      "success": false,
+      "steps": 750,
+      "peak_opening": 0.41300906286048467,
+      "final_opening": 0.4130087925554011
+    },
+    "replan1": {
+      "success": false,
+      "steps": 750,
+      "peak_opening": 0.10556114862941379,
+      "final_opening": 0.10556087965316839
+    }
+  },
+  {
+    "scene_seed": 6,
+    "policy_seed": 0,
+    "replan5": {
+      "success": false,
+      "steps": 750,
+      "peak_opening": 0.22480887780489117,
+      "final_opening": 0.224808825829644
+    },
+    "replan1": {
+      "success": true,
+      "steps": 369,
+      "peak_opening": 0.9600258369227547,
+      "final_opening": 0.9600258369227547
+    }
+  },
+  {
+    "scene_seed": 7,
+    "policy_seed": 0,
+    "replan5": {
+      "success": false,
+      "steps": 750,
+      "peak_opening": 0.13127822750792778,
+      "final_opening": 0.0261898726909334
+    },
+    "replan1": {
+      "success": false,
+      "steps": 750,
+      "peak_opening": 0.001260586810602625,
+      "final_opening": 0.00022659604184105658
+    }
+  },
+  {
+    "scene_seed": 8,
+    "policy_seed": 0,
+    "replan5": {
+      "success": true,
+      "steps": 224,
+      "peak_opening": 0.9531359826980991,
+      "final_opening": 0.9531359826980991
+    },
+    "replan1": {
+      "success": false,
+      "steps": 750,
+      "peak_opening": 0.00020948737286911754,
+      "final_opening": 0.0001786283893621502
+    }
+  },
+  {
+    "scene_seed": 9,
+    "policy_seed": 0,
+    "replan5": {
+      "success": false,
+      "steps": 750,
+      "peak_opening": 0.009328722559945346,
+      "final_opening": 9.871216644064634e-05
+    },
+    "replan1": {
+      "success": true,
+      "steps": 416,
+      "peak_opening": 0.9544452077003803,
+      "final_opening": 0.9544452077003803
+    }
+  }
+]

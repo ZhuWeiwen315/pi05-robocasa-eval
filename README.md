@@ -85,3 +85,7 @@ All environments, temporary files, weights, assets, and run outputs belong under
 This harness adapts the RoboCasa evaluation client from [robocasa-benchmark/openpi](https://github.com/robocasa-benchmark/openpi), pinned at `ca4c6d710db75e276bc7c866a57bd7e4aee5b6e8`, and reuses its π₀.₅ model and RoboCasa policy transforms. It relies on [RoboCasa](https://github.com/robocasa/robocasa) and [robosuite](https://github.com/ARISE-Initiative/robosuite).
 
 Project code is distributed under [Apache-2.0](LICENSE), with upstream attribution retained in adapted files. Refer to the respective upstream terms for model weights, kitchen assets, and third-party software; those materials are not included here.
+
+## Replanning ablation
+
+A paired 10-scene comparison of `replan=5` and `replan=1` produced 5/10 successful episodes in each setting, with two scene-level gains and two regressions. The default remains `replan=5`; no performance improvement is claimed. See [per-scene comparison and limitations](docs/REPLANNING_ABLATION.md).
