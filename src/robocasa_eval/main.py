@@ -43,6 +43,42 @@ IMAGE_KEYS = (
 )
 
 
+def _capture_trace_state(env, obs):
+    """Capture policy-visible state and cached raw drawer observations."""
+    import numpy as np
+    policy_state = {
+        key: np.asarray(obs[key]).tolist()
+        for key in STATE_KEYS
+    }
+
+    # gym.make wrappers resolve to RoboCasaGymEnv; its .env is the
+    # underlying simulator. Read cached observations without forcing sensors.
+    raw_env = env.unwrapped.env
+    raw_obs = raw_env._get_observations(force_update=False)
+    raw_keys = ("drawer_obj_pos", "drawer_obj_to_robot0_eef_pos")
+    simulator_state = {
+        key: np.asarray(raw_obs[key]).tolist()
+        for key in raw_keys
+        if key in raw_obs
+    }
+    drawer = getattr(raw_env, "drawer", None)
+    target_drawer = None
+    if drawer is not None:
+        target_drawer = {
+            "fixture_name": str(getattr(drawer, "name", type(drawer).__name__)),
+            "door_state": {
+                str(key): float(value)
+                for key, value in drawer.get_door_state(env=raw_env).items()
+            },
+        }
+    return {
+        "target_drawer": target_drawer,
+        "policy_observation": policy_state,
+        "simulator_observation": simulator_state,
+        "missing_simulator_keys": [key for key in raw_keys if key not in raw_obs],
+    }
+
+
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     tasks = parser.add_mutually_exclusive_group(required=True)
@@ -59,6 +95,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--replan-steps", type=int, default=5)
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--log-dir", type=Path, default=PROJECT_ROOT / "outputs")
+    parser.add_argument("--trace-actions", action="store_true", help="write per-step actions and drawer state to JSONL")
     args = parser.parse_args(argv)
     if args.num_trials is None:
         args.num_trials = 1 if args.smoke_lightwheel_task is not None else 50
@@ -109,9 +146,6 @@ def evaluate(args: argparse.Namespace) -> None:
     for task in task_names:
         horizon = select_horizon(get_task_horizon(task), robocasa.__version__)
         log_path = evaluation_path(args.log_dir, args.split, task, datetime.now())
-        if any(log_path.parent.rglob("stats.json")):
-            logging.info("%s/%s: stats.json exists; skipping", task, args.split)
-            continue
         log_path.mkdir(parents=True, exist_ok=False)
         client = WebsocketClientPolicy(args.host, args.port)
         env = make_task_env(gym, task, args)
@@ -123,6 +157,9 @@ def evaluate(args: argparse.Namespace) -> None:
                 action_plan = collections.deque()
                 frames = []
                 succeeded = False
+                trace_path = log_path / f"rollout_{episode_idx}_trace.jsonl"
+                if args.trace_actions:
+                    trace_path.write_text("", encoding="utf-8")
 
                 for step in range(horizon):
                     if not action_plan:
@@ -142,8 +179,30 @@ def evaluate(args: argparse.Namespace) -> None:
                     policy_action = np.asarray(action_plan.popleft())
                     if policy_action.shape != (12,) or not np.isfinite(policy_action).all():
                         raise ValueError(f"Expected a finite 12D policy action, got shape {policy_action.shape}")
-                    obs, _, _, _, info = env.step(convert_action(policy_action))
+                    pre_state = _capture_trace_state(env, obs) if args.trace_actions else None
+                    env_action = convert_action(policy_action)
+                    obs, _, _, _, info = env.step(env_action)
                     succeeded = bool(info["success"])
+                    if args.trace_actions:
+                        converted_action = (
+                            {str(key): np.asarray(value).tolist() for key, value in env_action.items()}
+                            if hasattr(env_action, "items")
+                            else np.asarray(env_action).tolist()
+                        )
+                        post_state = _capture_trace_state(env, obs)
+                        trace = {
+                            "seed": args.seed,
+                            "episode": episode_idx,
+                            "step": step,
+                            "prompt": prompt,
+                            "policy_action": policy_action.tolist(),
+                            "env_action": converted_action,
+                            "pre": pre_state,
+                            "post": post_state,
+                            "success": succeeded,
+                        }
+                        with trace_path.open("a", encoding="utf-8") as trace_file:
+                            trace_file.write(json.dumps(trace, allow_nan=False) + "\n")
 
                     frame = image_tools.convert_to_uint8(np.ascontiguousarray(env.render()))
                     if step % 2 == 0 or step == horizon - 1 or succeeded:

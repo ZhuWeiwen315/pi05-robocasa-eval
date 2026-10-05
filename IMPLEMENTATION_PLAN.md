@@ -1,5 +1,14 @@
 # π₀.₅ × RoboCasa365：实施计划
 
+## 当前状态（2026-10-05；覆盖下方历史阶段记录）
+
+- 两个独立环境、项目私有 OSMesa、四类 smoke 资产、官方 checkpoint 与 tokenizer 已就绪。
+- 已验证单张 RTX 3090 上的 JAX 运算、真实 Orbax 参数恢复与回环地址模型服务；已完成三相机 CPU 仿真和端到端 OpenDrawer rollout。
+- 三个单回合 smoke 种子中 seed 0、1 成功，seed 2 失败；seed 7 诊断回合部分打开后失败。详情见 `docs/RESULTS.md`。
+- 场景种子已记录，策略采样 RNG 尚未单独固定。结果不是正式排行榜复现，也不是性能改进证明。
+- 下一步：完成首版源码与说明归档，固定策略 RNG，开展预先定义的多种子基线与失败分析。
+- 下方内容保留为历史核查记录；其中“尚未安装/下载/运行”等状态不代表当前状态。当前安全边界见 `docs/LAB_SAFETY.md`。
+
 ## 固定输入与边界
 
 - 上游源码只读使用：`sources/openpi` @ `215abfb217dbac7d5f1273282331b9b1866c0479`；`sources/robocasa` @ `456174f62b89b8fca99eaaf33949c29fec9cfc2a`；官方基线 `sources/robocasa-openpi` @ `ca4c6d710db75e276bc7c866a57bd7e4aee5b6e8`。对照源码 `sources/robocasa-v1.0` 来自 v1.0 标签 @ `8f3c96ec8d1bfcd8126cad2bca887da98d30e997`。`sources/` 已忽略；不在上游目录写项目适配代码。
